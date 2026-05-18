@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Tasks</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <div class="navbar">
+
+        <div class="logo">
+            Study Planner
+        </div>
+
+        <ul>
+
+            <li>
+                <a href="dashboard.html">
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="classes.html">
+                    Classes
+                </a>
+            </li>
+
+            <li>
+                <a href="exams.html">
+                    Exams
+                </a>
+            </li>
+
+            <li>
+                <a href="tasks.html">
+                    Tasks
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <!-- TASK SECTION -->
+
+    <section class="container">
+
+        <h1>Tasks</h1>
+
+        <!-- ADD TASK -->
+
+        <input
+        type="text"
+        id="taskName"
+        placeholder="Enter Task Name">
+
+        <input
+        type="date"
+        id="taskDate">
+
+        <button
+        type="button"
+        onclick="addTask()">
+
+            Add Task
+
+        </button>
+
+        <!-- TASKS LIST -->
+
+        <div id="tasks-list">
+
+            <p>No tasks left for today</p>
+
+        </div>
+
+    </section>
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <a href="dashboard.html">
+            Home
+        </a>
+
+        <a href="add.html" class="add-button">
+            +
+        </a>
+
+        <a href="#">
+            Menu
+        </a>
+
+        <a href="#">
+            Profile
+        </a>
+
+    </div>
+
+    <!-- SCRIPT -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

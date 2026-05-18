@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-header">
+    <div>
+        <h2>Add New</h2>
+        <p>Manage your study life easily 🚀</p>
+    </div>
+</div>
+
+<!-- ADD COURSE -->
+<section class="section-box">
+    <h2>📚 Add Course</h2>
+    <input type="text" id="courseName" placeholder="e.g. Mathematics, Physics...">
+    <select id="difficulty">
+        <option value="">Select Difficulty</option>
+        <option value="Easy">🟢 Easy</option>
+        <option value="Medium">🟡 Medium</option>
+        <option value="Hard">🔴 Hard</option>
+    </select>
+    <button onclick="addCourse()">
+        <i class="fa-solid fa-plus" style="margin-right:8px;"></i>Add Course
+    </button>
+</section>
+
+<!-- ADD EXAM -->
+<section class="section-box">
+    <h2>📝 Add Exam</h2>
+    <input type="text" id="subject" placeholder="e.g. Final Math Exam...">
+    <input type="date" id="examDate">
+    <button onclick="addExam()">
+        <i class="fa-solid fa-plus" style="margin-right:8px;"></i>Add Exam
+    </button>
+</section>
+
+<!-- ADD TASK -->
+<section class="section-box">
+    <h2>✅ Add Task</h2>
+    <input type="text" id="taskName" placeholder="e.g. Read Chapter 5...">
+    <input type="date" id="taskDate">
+    <button onclick="addTask()">
+        <i class="fa-solid fa-plus" style="margin-right:8px;"></i>Add Task
+    </button>
+</section>
+
+<!-- STUDY PLAN — FIXED -->
+<section class="section-box">
+    <h2>📅 Study Plan</h2>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:4px;">Auto-generates a study schedule from your courses, exams & tasks.</p>
+    <button id="generatePlanBtn" onclick="generatePlan()">
+        <i class="fa-solid fa-wand-magic-sparkles" style="margin-right:8px;"></i>Generate Study Plan
+    </button>
+    <button onclick="showPlans()" style="background:rgba(255,255,255,0.08);margin-top:10px;">
+        <i class="fa-solid fa-list" style="margin-right:8px;"></i>Show My Plans
+    </button>
+    <div id="plansBox" style="margin-top:10px;"></div>
+</section>
+
+<!-- QUICK INFO -->
+<section class="section-box">
+    <h2>⚡ How It Works</h2>
+    <div class="plan-card">
+        <h3>🔥 Study Streak</h3>
+        <p>Complete tasks or exams daily to grow your streak and unlock rewards.</p>
+    </div>
+    <div class="plan-card">
+        <h3>📊 Progress Tracking</h3>
+        <p>Every completed task adds 10% to your progress bar.</p>
+    </div>
+    <div class="plan-card">
+        <h3>🏆 Unlock Rewards</h3>
+        <p>3-day streak → Theme · 5-day → Badge · 10-day → Pro Mode.</p>
+    </div>
+</section>
+
+<!-- FOOTER NAVBAR -->
+<div class="footer-navbar">
+    <a href="dashboard.html" class="footer-item">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+    </a>
+    <a href="add.html" class="footer-item plus-btn active" style="background:linear-gradient(135deg,#ff3cac,#2b86c5);">
+        <i class="fa-solid fa-plus"></i>
+    </a>
+    <a href="profile.html" class="footer-item">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
+    </a>
+</div>
+
+<div id="toast"></div>
+<script src="script.js"></script>
+</body>
+</html>

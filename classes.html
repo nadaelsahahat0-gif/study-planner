@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>Classes</title>
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet"
+    href="style.css">
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+    <div class="logo">
+
+        Study Planner
+
+    </div>
+
+    <ul>
+
+        <li>
+            <a href="dashboard.html">
+                Home
+            </a>
+        </li>
+
+        <li>
+            <a href="classes.html">
+                Classes
+            </a>
+        </li>
+
+        <li>
+            <a href="exams.html">
+                Exams
+            </a>
+        </li>
+
+        <li>
+            <a href="tasks.html">
+                Tasks
+            </a>
+        </li>
+
+    </ul>
+
+</div>
+
+<!-- CONTENT -->
+
+<section class="container">
+
+    <h1>Classes</h1>
+
+    <div id="classes-list">
+
+        <p>Loading...</p>
+
+    </div>
+
+</section>
+
+<!-- FOOTER -->
+
+<div class="footer">
+
+    <a href="dashboard.html">
+
+        <i class="fa-solid fa-house"></i>
+
+    </a>
+
+    <a href="add.html"
+    class="add-button">
+
+        <i class="fa-solid fa-plus"></i>
+
+    </a>
+
+    <a href="#">
+
+        <i class="fa-solid fa-bars"></i>
+
+    </a>
+
+    <a href="profile.html">
+
+        <i class="fa-solid fa-user"></i>
+
+    </a>
+
+</div>
+
+<!-- SCRIPT -->
+
+<script>
+
+async function loadClasses() {
+
+    const user_id =
+    localStorage.getItem("user_id");
+
+    // لو مش عامل login
+    if (!user_id) {
+
+        window.location.href =
+        "login.html";
+
+        return;
+
+    }
+
+    try {
+
+        const response =
+        await fetch(`/courses/${user_id}`);
+
+        const data =
+        await response.json();
+
+        const classesList =
+        document.getElementById("classes-list");
+
+        // لو مفيش كورسات
+        if (data.length === 0) {
+
+            classesList.innerHTML =
+            "<p>No classes found</p>";
+
+            return;
+
+        }
+
+        let output = "";
+
+        data.forEach(course => {
+
+            output += `
+
+            <div class="plan-card">
+
+                <h3>
+                📚 ${course.course_name}
+                </h3>
+
+                <p>
+                Difficulty:
+                ${course.difficulty}
+                </p>
+
+            </div>
+
+            `;
+
+        });
+
+        classesList.innerHTML =
+        output;
+
+    }
+
+    catch(error) {
+
+        console.log(error);
+
+        document.getElementById(
+            "classes-list"
+        ).innerHTML =
+        "<p>Error loading classes</p>";
+
+    }
+
+}
+
+// PAGE LOAD
+window.addEventListener(
+    "DOMContentLoaded",
+    loadClasses
+);
+
+</script>
+
+</body>
+</html>

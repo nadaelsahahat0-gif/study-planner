@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-header">
+    <div>
+        <h2>Profile</h2>
+        <p>Your study identity 🎓</p>
+    </div>
+</div>
+
+<!-- AVATAR + STATS -->
+<div style="text-align:center;padding:20px 20px 0;">
+    <div style="
+        width:90px;height:90px;
+        background:linear-gradient(135deg,#ff3cac,#2b86c5);
+        border-radius:50%;
+        display:inline-flex;align-items:center;justify-content:center;
+        font-size:38px;
+        box-shadow:0 0 30px rgba(255,60,172,0.5);
+        margin-bottom:16px;
+        animation:fadeUp 0.6s ease;
+    ">🎓</div>
+    <h2 id="profileName" style="font-size:24px;font-weight:800;margin-bottom:4px;animation:fadeUp 0.7s ease;"></h2>
+    <p id="profileEmail" style="color:var(--muted);font-size:14px;animation:fadeUp 0.8s ease;"></p>
+</div>
+
+<!-- STREAK STATS -->
+<div class="stats-navbar" style="margin-top:20px;">
+    <div class="stat-card">
+        <h3 id="profileStreak">0</h3>
+        <p>Streak 🔥</p>
+    </div>
+    <div class="stat-card">
+        <h3 id="profileCompleted">0</h3>
+        <p>Completed ✅</p>
+    </div>
+    <div class="stat-card">
+        <h3 id="profileProgress">0%</h3>
+        <p>Progress 📊</p>
+    </div>
+</div>
+
+<!-- USER INFO -->
+<section class="user-details" style="padding:16px 20px;">
+    <div class="user">
+
+        <div class="settings" onclick="toggleUpdate()" title="Edit Profile">
+            <i class="fas fa-pen"></i>
+        </div>
+
+        <p><i class="fas fa-user"></i> <span id="profileNameDetail"></span></p>
+        <p><i class="fas fa-envelope"></i> <span id="profileEmailDetail"></span></p>
+        <p><i class="fas fa-phone"></i> <span id="profilePhone"></span></p>
+
+        <!-- REWARD -->
+        <div id="profileReward" style="margin-top:16px;"></div>
+
+        <!-- LOGOUT -->
+        <button onclick="logout()" style="margin-top:20px;background:rgba(255,255,255,0.08);">
+            <i class="fa-solid fa-right-from-bracket" style="margin-right:8px;"></i>Logout
+        </button>
+
+        <!-- UPDATE FORM -->
+        <div class="update-box" id="updateBox">
+            <h2 style="margin:20px 0 4px;font-size:18px;">✏️ Update Profile</h2>
+            <input type="text"  id="newName"  placeholder="New Name">
+            <input type="text"  id="newPhone" placeholder="New Phone">
+            <input type="email" id="newEmail" placeholder="New Email">
+            <button onclick="updateProfile()" style="margin-top:12px;">
+                <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>Save Changes
+            </button>
+        </div>
+
+    </div>
+</section>
+
+<!-- FOOTER NAVBAR -->
+<div class="footer-navbar">
+    <a href="dashboard.html" class="footer-item">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+    </a>
+    <a href="add.html" class="footer-item plus-btn">
+        <i class="fa-solid fa-plus"></i>
+    </a>
+    <a href="profile.html" class="footer-item active">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
+    </a>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+function showToast(msg) {
+    const t = document.getElementById("toast");
+    if (!t) return;
+    t.innerText = msg;
+    t.style.opacity = 1;
+    setTimeout(() => t.style.opacity = 0, 2800);
+}
+
+async function loadUserProfile() {
+    const user_id = localStorage.getItem("user_id");
+    if (!user_id) { window.location.href = "login.html"; return; }
+
+    try {
+        const res  = await fetch(`/user/${user_id}`);
+        const data = await res.json();
+
+        document.getElementById("profileName").innerText        = data.name;
+        document.getElementById("profileEmail").innerText       = data.email;
+        document.getElementById("profileNameDetail").innerText  = data.name;
+        document.getElementById("profileEmailDetail").innerText = data.email;
+        document.getElementById("profilePhone").innerText       = data.phone || "—";
+
+        // Stats from localStorage
+        const streak    = Number(localStorage.getItem("streak")) || 0;
+        const completed = Number(localStorage.getItem("completedTasks")) || 0;
+        const progress  = Math.min(completed * 10, 100);
+
+        document.getElementById("profileStreak").textContent    = streak;
+        document.getElementById("profileCompleted").textContent = completed;
+        document.getElementById("profileProgress").textContent  = progress + "%";
+
+        // Reward badge
+        const rewardEl = document.getElementById("profileReward");
+        const rewards = [
+            { min: 10, icon: "👑", title: "Pro Study Mode", sub: "10-day streak" },
+            { min: 5,  icon: "🏆", title: "Achievement Badge", sub: "5-day streak" },
+            { min: 3,  icon: "🎨", title: "New Theme", sub: "3-day streak" },
+            { min: 1,  icon: "✨", title: "Motivation Mode", sub: "Great start!" },
+        ];
+        const reward = rewards.find(r => streak >= r.min);
+        if (reward) {
+            rewardEl.innerHTML = `
+            <div class="reward-badge">
+                <div class="badge-icon">${reward.icon}</div>
+                <div class="badge-text">
+                    <strong>${reward.title} Unlocked!</strong>
+                    <span>${reward.sub}</span>
+                </div>
+            </div>`;
+        } else {
+            rewardEl.innerHTML = `
+            <div class="reward-badge" style="opacity:0.6;">
+                <div class="badge-icon">🔒</div>
+                <div class="badge-text">
+                    <strong>Complete tasks to unlock rewards</strong>
+                    <span>Start your streak today</span>
+                </div>
+            </div>`;
+        }
+
+    } catch (err) { console.log(err); }
+}
+
+function toggleUpdate() {
+    document.getElementById("updateBox").classList.toggle("active");
+}
+
+function logout() {
+    localStorage.removeItem("user_id");
+    window.location.href = "login.html";
+}
+
+async function updateProfile() {
+    const user_id = localStorage.getItem("user_id");
+    const name  = document.getElementById("newName").value;
+    const email = document.getElementById("newEmail").value;
+    const phone = document.getElementById("newPhone").value;
+
+    try {
+        const res  = await fetch(`/update-user/${user_id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, phone })
+        });
+        const data = await res.json();
+        showToast("✅ " + data.message);
+        loadUserProfile();
+        toggleUpdate();
+    } catch (err) { console.log(err); }
+}
+
+window.addEventListener("DOMContentLoaded", loadUserProfile);
+
+</script>
+</body>
+</html>

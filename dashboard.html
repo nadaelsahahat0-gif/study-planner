@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-header">
+    <div>
+        <h2 id="dayName">Monday</h2>
+        <p id="todayDate"></p>
+    </div>
+    <div class="search-icon">
+        <i class="fa-solid fa-bell"></i>
+    </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-navbar">
+    <div class="stat-card" onclick="filterSection('classes')">
+        <h3 id="classesCount">0</h3>
+        <p>Classes</p>
+    </div>
+    <div class="stat-card" onclick="filterSection('exams')">
+        <h3 id="examsCount">0</h3>
+        <p>Exams</p>
+    </div>
+    <div class="stat-card" onclick="filterSection('tasks')">
+        <h3 id="tasksCount">0</h3>
+        <p>Tasks</p>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <div id="emptyBox">
+        <div id="dashboardContent">
+            <div style="text-align:center;padding:40px 20px 20px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" class="study-image">
+                <h2 style="margin-top:16px;">Loading your dashboard...</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER NAVBAR -->
+<div class="footer-navbar">
+    <a href="dashboard.html" class="footer-item active">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+    </a>
+    <a href="add.html" class="footer-item plus-btn">
+        <i class="fa-solid fa-plus"></i>
+    </a>
+    <a href="profile.html" class="footer-item">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
+    </a>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+// DATE
+const today = new Date();
+const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+document.getElementById("dayName").innerHTML = days[today.getDay()];
+document.getElementById("todayDate").innerHTML = today.toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" });
+
+// Local state for filtering
+let allCourses = [], allExams = [], allTasks = [];
+let activeFilter = null;
+
+function filterSection(type) {
+    activeFilter = type;
+    if (type === 'classes') renderFiltered(allCourses, [], []);
+    else if (type === 'exams') renderFiltered([], allExams, []);
+    else if (type === 'tasks') renderFiltered([], [], allTasks);
+
+    document.querySelectorAll('.stat-card').forEach((c, i) => {
+        const types = ['classes', 'exams', 'tasks'];
+        c.style.borderColor = types[i] === type ? 'rgba(255,60,172,0.5)' : 'var(--border)';
+        c.style.boxShadow   = types[i] === type ? 'var(--glow-pink)' : '';
+    });
+}
+
+function renderFiltered(courses, exams, tasks) {
+    const db = document.getElementById("dashboardContent");
+    if (!db) return;
+
+    let output = "";
+
+    if (courses.length === 0 && exams.length === 0 && tasks.length === 0) {
+        db.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);">Nothing here yet. Add some from the + button!</div>`;
+        return;
+    }
+
+    if (courses.length > 0) {
+        courses.forEach(c => {
+            const diffColor = c.difficulty === 'Hard' ? '#ff3cac' : c.difficulty === 'Medium' ? '#ff8c42' : '#00e5a0';
+            output += `
+            <div class="plan-card" data-id="${c.id}" data-type="course" style="animation:fadeUp 0.4s ease;">
+                <h3>📚 ${c.course_name}</h3>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+                    <span style="display:inline-block;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;background:${diffColor}22;color:${diffColor};">${c.difficulty}</span>
+                    <button class="btn-complete" style="width:auto;padding:8px 18px;margin:0;font-size:13px;" onclick="completeTask(this)">Done ✓</button>
+                </div>
+            </div>`;
+        });
+    }
+
+    if (exams.length > 0) {
+        exams.forEach(e => {
+            const dateStr = new Date(e.exam_date).toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+            output += `
+            <div class="plan-card" data-id="${e.id}" data-type="exam" style="animation:fadeUp 0.4s ease;">
+                <h3>📝 ${e.subject}</h3>
+                <p style="margin-top:4px;color:var(--muted);">📅 ${dateStr}</p>
+                <button class="btn-complete" onclick="completeTask(this)">Complete Exam ✅</button>
+            </div>`;
+        });
+    }
+
+    if (tasks.length > 0) {
+        tasks.forEach(t => {
+            const dateStr = new Date(t.task_date).toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+            output += `
+            <div class="plan-card" data-id="${t.id}" data-type="task" style="animation:fadeUp 0.4s ease;">
+                <h3>✅ ${t.task_name}</h3>
+                <p style="margin-top:4px;color:var(--muted);">📅 ${dateStr}</p>
+                <button class="btn-complete" onclick="completeTask(this)">Complete Task 🎯</button>
+            </div>`;
+        });
+    }
+
+    db.innerHTML = `<div style="padding:0 20px 20px;">${output}</div>`;
+}
+
+// =============================================
+// OVERRIDE loadCounts — assigned to window so
+// script.js's completeTask always calls THIS.
+// script.js runs after this inline block, so
+// assigning via window guarantees the override.
+// =============================================
+window.loadCounts = async function() {
+    const uid = localStorage.getItem("user_id");
+    if (!uid) { window.location.href = "login.html"; return; }
+
+    try {
+        const [c, e, t] = await Promise.all([
+            fetch(`/courses/${uid}`).then(r => r.json()),
+            fetch(`/exams/${uid}`).then(r => r.json()),
+            fetch(`/tasks/${uid}`).then(r => r.json())
+        ]);
+
+        allCourses = c; allExams = e; allTasks = t;
+
+        document.getElementById("classesCount").textContent = c.length;
+        document.getElementById("examsCount").textContent   = e.length;
+        document.getElementById("tasksCount").textContent   = t.length;
+
+        // Re-render: filtered view if active, otherwise full dashboard
+        if      (activeFilter === 'classes') renderFiltered(allCourses, [], []);
+        else if (activeFilter === 'exams')   renderFiltered([], allExams, []);
+        else if (activeFilter === 'tasks')   renderFiltered([], [], allTasks);
+        else if (typeof renderDashboard === 'function') renderDashboard(c, e, t);
+
+        if (typeof applyRewards === 'function') applyRewards();
+
+    } catch (err) { console.log(err); }
+};
+
+window.addEventListener("DOMContentLoaded", () => window.loadCounts());
+
+</script>
+
+<script src="script.js"></script>
+</body>
+</html>
